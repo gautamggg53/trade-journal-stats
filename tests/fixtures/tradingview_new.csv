@@ -1,0 +1,5 @@
+Trade number,Type,Date and time,Signal,Price USD,Size (qty),Size (value),Net P&L USD,Net P&L %,Favorable excursion USD,Favorable excursion %,Adverse excursion USD,Adverse excursion %,Cumulative P&L USD,Cumulative P&L %
+1,Entry long,2026-04-01 14:30,Long,5005.00,2,10010,500.00,0.20,600.00,0.24,-50.00,-0.02,500.00,0.20
+1,Exit long,2026-04-01 16:00,TP,5010.00,2,10020,500.00,0.20,600.00,0.24,-50.00,-0.02,500.00,0.20
+2,Entry short,2026-04-02 10:00,Short,5005.00,1,5005,-250.00,-0.10,25.00,0.01,-300.00,-0.12,250.00,0.10
+2,Exit short,2026-04-02 11:30,Cover,5010.00,1,5010,-250.00,-0.10,25.00,0.01,-300.00,-0.12,250.00,0.10

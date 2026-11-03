@@ -1,0 +1,24 @@
+name: New or changed export format
+description: Ask for support for another platform's export, or report that an export layout changed.
+labels: [format]
+body:
+  - type: input
+    id: platform
+    attributes:
+      label: Platform and export path
+      placeholder: "e.g. NinjaTrader 8 > Account Performance > Trades > Export"
+    validations:
+      required: true
+  - type: textarea
+    id: header
+    attributes:
+      label: Header row and 2-3 redacted rows
+      description: Replace real account numbers, names and amounts with made-up values.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Timezone of the timestamps, whether P&L is gross or net, partial closes, etc.

@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "trade-journal-stats"
+version = "0.1.0"
+description = "Performance statistics for closed-trade histories (generic CSV, MT5, cTrader, TradingView): P&L, win rate, profit factor, expectancy and R, drawdown, Sharpe/Sortino, breakdowns, HTML report."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Gautam Goyal" }]
+requires-python = ">=3.10"
+keywords = ["trading", "trade journal", "statistics", "drawdown", "expectancy", "metatrader", "ctrader", "tradingview"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+dependencies = [
+    "tzdata; sys_platform == 'win32'",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "pytest-cov>=4", "ruff>=0.5", "build>=1.0"]
+
+[project.scripts]
+trade-stats = "trade_journal_stats.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/gautamggg53/trade-journal-stats"
+Issues = "https://github.com/gautamggg53/trade-journal-stats/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/trade_journal_stats"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "examples", "docs", "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "pyproject.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["trade_journal_stats"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]

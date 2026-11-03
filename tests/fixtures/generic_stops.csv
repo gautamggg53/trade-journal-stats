@@ -1,0 +1,4 @@
+symbol,side,close_time,entry_price,exit_price,stop_price,pnl
+ES,long,2026-03-02 15:00,5000,5010,4995,500
+ES,short,2026-03-03 15:00,5000,5005,5010,-250
+NQ,long,2026-03-04 15:00,18000,17980,17980,-400

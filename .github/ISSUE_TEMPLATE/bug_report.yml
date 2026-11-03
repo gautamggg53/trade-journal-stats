@@ -1,0 +1,41 @@
+name: Bug report
+description: Something is calculated wrongly, a file fails to parse, or the CLI crashes.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Please do not upload real account statements.** Redact or
+        replace account numbers, names and balances before attaching a sample.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Include the exact command you ran and the full output or error.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: For a wrong number, show how you calculated the expected value.
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: Input format
+      options: [generic CSV, MT5 HTML report, MT5 CSV, cTrader CSV, TradingView List of Trades, other]
+    validations:
+      required: true
+  - type: textarea
+    id: sample
+    attributes:
+      label: Redacted sample
+      description: The header row and 2-3 redacted rows are usually enough.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version and platform
+      placeholder: "trade-stats 0.1.0, Python 3.12, Windows 11"

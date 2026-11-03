@@ -1,0 +1,15 @@
+name: Feature request
+description: Suggest a statistic, output or option.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to measure or do?
+    validations:
+      required: true
+  - type: textarea
+    id: definition
+    attributes:
+      label: Exact definition
+      description: For a new statistic, give the formula or a reference so it can be tested.
