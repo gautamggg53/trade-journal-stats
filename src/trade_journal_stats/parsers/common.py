@@ -54,12 +54,32 @@ def looks_like_html(text: str) -> bool:
     return "<table" in head or "<html" in head or "<!doctype html" in head
 
 
+_SEP_DIRECTIVE = re.compile(r'^\s*"?sep=(.)"?\s*$', re.IGNORECASE)
+_DELIMITERS = (",", ";", "\t")
+
+
 def read_csv_rows(text: str) -> list[list[str]]:
-    """Read CSV text, sniffing the delimiter among comma, semicolon and tab."""
-    sample = text[:4000]
-    first = sample.splitlines()[0] if sample else ""
-    counts = {d: first.count(d) for d in (",", ";", "\t")}
-    delim = max(counts, key=lambda d: counts[d]) if any(counts.values()) else ","
+    """Read CSV text, sniffing the delimiter among comma, semicolon and tab.
+
+    An Excel ``sep=;`` directive on the first line is honoured and dropped.
+    Otherwise the delimiter is the one that appears most often on the first line
+    outside double quotes, so commas inside quoted header cells are not counted.
+    """
+    lines = text.splitlines(keepends=True)
+    first = lines[0] if lines else ""
+    directive = _SEP_DIRECTIVE.match(first)
+    if directive:
+        delim = directive.group(1)
+        text = "".join(lines[1:])
+    else:
+        counts = dict.fromkeys(_DELIMITERS, 0)
+        quoted = False
+        for ch in first:
+            if ch == '"':
+                quoted = not quoted
+            elif not quoted and ch in counts:
+                counts[ch] += 1
+        delim = max(counts, key=lambda d: counts[d]) if any(counts.values()) else ","
     reader = csv.reader(io.StringIO(text), delimiter=delim)
     return [[c.strip() for c in row] for row in reader if any(c.strip() for c in row)]
 

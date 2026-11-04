@@ -225,3 +225,24 @@ def test_decode_variants():
 def test_detect_format_rows():
     assert detect_format(read_csv_rows("Trade #,Type,Date/Time\n"), False) == "tradingview"
     assert detect_format(read_csv_rows("close_time,pnl\n"), False) == "generic"
+
+
+def test_csv_excel_sep_directive_is_honoured_and_dropped():
+    text = "sep=;\nclose_time;pnl;symbol\n2024-01-02 10:00;-12,5;EURUSD\n"
+    rows = read_csv_rows(text)
+    assert rows == [["close_time", "pnl", "symbol"], ["2024-01-02 10:00", "-12,5", "EURUSD"]]
+    assert detect_format(rows, False) == "generic"
+    # Quoted, upper-case and tab variants seen in the wild.
+    assert read_csv_rows('"SEP=,"\na,b\n') == [["a", "b"]]
+    assert read_csv_rows("sep=\t\na\tb\n") == [["a", "b"]]
+
+
+def test_csv_delimiter_inside_quoted_header_is_ignored():
+    # The first line has two commas inside quotes but only one real delimiter (;).
+    text = '"Profit, USD";"Close time, UTC"\n"1,5";2024-01-02\n'
+    assert read_csv_rows(text) == [["Profit, USD", "Close time, UTC"], ["1,5", "2024-01-02"]]
+
+
+def test_csv_single_column_defaults_to_comma():
+    assert read_csv_rows("pnl\n5\n") == [["pnl"], ["5"]]
+    assert read_csv_rows("") == []
