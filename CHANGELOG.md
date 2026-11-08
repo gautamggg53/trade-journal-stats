@@ -13,6 +13,11 @@ All notable changes to this project are documented here. The format follows
   is no longer mistaken for the header.
 - Delimiter sniffing ignores commas inside quoted header cells, so a header like
   `"Profit, USD";"Close time"` is split on `;` rather than `,`.
+- A number that contains both `.` and `,` is read using the rightmost mark as
+  the decimal point. Before, `1.234,50` without `--decimal-comma` was silently
+  read as `1.2345` (and `1,234.50` with the flag likewise), which skewed P&L.
+- Overflowing values such as `1e400` are rejected with a clear error instead of
+  becoming infinity and breaking every statistic.
 
 ## [0.1.0] - 2026-11-03
 

@@ -178,6 +178,34 @@ def test_parse_number(text, expected):
     assert parse_number(text) == expected
 
 
+@pytest.mark.parametrize("decimal_comma", [False, True])
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("1.234,50", 1234.5),
+        ("-1.234.567,89", -1234567.89),
+        ("1,234.50", 1234.5),
+        ("-1,234,567.89", -1234567.89),
+        ("(1.234,50)", -1234.5),
+    ],
+)
+def test_parse_number_both_marks_uses_rightmost_as_decimal(text, expected, decimal_comma):
+    assert parse_number(text, decimal_comma=decimal_comma) == pytest.approx(expected)
+
+
+def test_parse_number_single_mark_follows_flag():
+    assert parse_number("1,234") == 1234.0
+    assert parse_number("1,234", decimal_comma=True) == pytest.approx(1.234)
+    assert parse_number("1.234") == pytest.approx(1.234)
+    assert parse_number("1.234", decimal_comma=True) == 1234.0
+
+
+@pytest.mark.parametrize("text", ["1e400", "-1e999"])
+def test_parse_number_rejects_infinite(text):
+    with pytest.raises(InputError, match="not a finite number"):
+        parse_number(text, field="pnl on row 2")
+
+
 def test_parse_number_errors():
     assert parse_number("", empty=0.0) == 0.0
     with pytest.raises(InputError):

@@ -156,8 +156,9 @@ One row per closed trade. Column names are case-insensitive.
 | `stop_price` | no | With entry/exit price and side, gives a price-based R |
 | `risk` | no | Money at risk when the trade was opened; gives R = pnl / risk |
 
-Semicolon- and tab-separated files are accepted; use `--decimal-comma` for
-`1.234,56` style numbers.
+Semicolon- and tab-separated files are accepted. Values that contain both `.`
+and `,` (such as `1.234,56` or `1,234.56`) are read correctly either way; use
+`--decimal-comma` when numbers use a lone comma as the decimal mark (`12,5`).
 
 ## Options
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import io
+import math
 import re
 from datetime import datetime, timedelta, timezone, tzinfo
 from html.parser import HTMLParser
@@ -135,7 +136,12 @@ _NUM_STRIP = re.compile(r"[^\d.,\-+eE]")
 def parse_number(
     value: str, *, field: str = "value", decimal_comma: bool = False, empty: float | None = None
 ) -> float:
-    """Parse a number such as ``1 234.50``, ``-1,234.50``, ``(12.30)``, ``$5`` or ``−3``."""
+    """Parse a number such as ``1 234.50``, ``-1,234.50``, ``(12.30)``, ``$5`` or ``−3``.
+
+    ``decimal_comma`` decides how a lone ``,`` or ``.`` is read (``1,234`` is
+    1234 by default, 1.234 with the flag). When a value contains both marks the
+    rightmost one is taken as the decimal mark. Infinite values are rejected.
+    """
     text = (value or "").strip().replace("\u2212", "-").replace("\u00a0", "").replace(" ", "")
     if text in ("", "-", "—"):
         if empty is not None:
@@ -143,11 +149,17 @@ def parse_number(
         raise InputError(f"missing {field}")
     negative = text.startswith("(") and text.endswith(")")
     text = _NUM_STRIP.sub("", text)
+    if "." in text and "," in text:
+        # Both marks present: the rightmost one is the decimal mark, whatever the
+        # flag says, so "1.234,50" and "1,234.50" can't be silently misread.
+        decimal_comma = text.rfind(",") > text.rfind(".")
     text = text.replace(".", "").replace(",", ".") if decimal_comma else text.replace(",", "")
     try:
         number = float(text)
     except ValueError as exc:
         raise InputError(f"cannot read {field} {value!r} as a number") from exc
+    if not math.isfinite(number):
+        raise InputError(f"{field} {value!r} is not a finite number")
     return -abs(number) if negative else number
 
 
