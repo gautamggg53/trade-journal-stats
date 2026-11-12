@@ -8,6 +8,10 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- A lone comma that can't be thousands grouping (`12,50`, `1,5`, `0,125`) is now
+  read as a decimal comma even without `--decimal-comma`, so European P&L values
+  are no longer inflated 10x to 1000x; with the flag, `0.125` and `1.5` likewise
+  stay decimals. `1,234` is still ambiguous and follows the flag.
 - CSV files that start with Excel's `sep=;` line (common in semicolon-delimited
   exports from European locales) are now read with that delimiter, and the line
   is no longer mistaken for the header.

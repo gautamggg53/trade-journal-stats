@@ -157,8 +157,9 @@ One row per closed trade. Column names are case-insensitive.
 | `risk` | no | Money at risk when the trade was opened; gives R = pnl / risk |
 
 Semicolon- and tab-separated files are accepted. Values that contain both `.`
-and `,` (such as `1.234,56` or `1,234.56`) are read correctly either way; use
-`--decimal-comma` when numbers use a lone comma as the decimal mark (`12,5`).
+and `,` (such as `1.234,56` or `1,234.56`) are read correctly either way, and so
+is a lone comma that can't be thousands grouping (`12,5` or `0,125`). Use
+`--decimal-comma` when values like `1,234` mean 1.234 rather than 1234.
 
 ## Options
 

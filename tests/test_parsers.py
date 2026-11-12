@@ -274,3 +274,24 @@ def test_csv_delimiter_inside_quoted_header_is_ignored():
 def test_csv_single_column_defaults_to_comma():
     assert read_csv_rows("pnl\n5\n") == [["pnl"], ["5"]]
     assert read_csv_rows("") == []
+
+
+@pytest.mark.parametrize(
+    "text, decimal_comma, expected",
+    [
+        ("12,50", False, 12.5),
+        ("-12,5", False, -12.5),
+        ("1,2345", False, 1.2345),
+        ("0,125", False, 0.125),
+        ("-0,100", False, -0.1),
+        (",5", False, 0.5),
+        ("(3,75)", False, -3.75),
+        ("1,234,567", False, 1234567.0),
+        ("1.5", True, 1.5),
+        ("0.125", True, 0.125),
+        ("1.2345", True, 1.2345),
+        ("1.234.567", True, 1234567.0),
+    ],
+)
+def test_parse_number_lone_mark_that_cannot_be_grouping_is_decimal(text, decimal_comma, expected):
+    assert parse_number(text, decimal_comma=decimal_comma) == pytest.approx(expected)

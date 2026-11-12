@@ -138,9 +138,12 @@ def parse_number(
 ) -> float:
     """Parse a number such as ``1 234.50``, ``-1,234.50``, ``(12.30)``, ``$5`` or ``−3``.
 
-    ``decimal_comma`` decides how a lone ``,`` or ``.`` is read (``1,234`` is
-    1234 by default, 1.234 with the flag). When a value contains both marks the
-    rightmost one is taken as the decimal mark. Infinite values are rejected.
+    ``decimal_comma`` decides how an ambiguous lone ``,`` or ``.`` is read
+    (``1,234`` is 1234 by default, 1.234 with the flag). A lone mark that can't
+    be thousands grouping, because it isn't followed by exactly three digits or
+    the integer part is zero (``12,50``, ``0,125``), is always the decimal mark.
+    When a value contains both marks the rightmost one is taken as the decimal
+    mark. Infinite values are rejected.
     """
     text = (value or "").strip().replace("\u2212", "-").replace("\u00a0", "").replace(" ", "")
     if text in ("", "-", "—"):
@@ -153,6 +156,16 @@ def parse_number(
         # Both marks present: the rightmost one is the decimal mark, whatever the
         # flag says, so "1.234,50" and "1,234.50" can't be silently misread.
         decimal_comma = text.rfind(",") > text.rfind(".")
+    else:
+        # A single grouping mark can only be thousands grouping when exactly three
+        # digits follow it and the integer part isn't zero, so "12,50", "1,5" and
+        # "0,125" are decimals whatever the flag says (likewise "0.125" with it).
+        mark = "." if decimal_comma else ","
+        if text.count(mark) == 1:
+            whole, frac = text.split(mark)
+            digits = frac.split("e")[0].split("E")[0]
+            if len(digits) != 3 or whole.lstrip("+-") in ("", "0"):
+                decimal_comma = mark == ","
     text = text.replace(".", "").replace(",", ".") if decimal_comma else text.replace(",", "")
     try:
         number = float(text)
